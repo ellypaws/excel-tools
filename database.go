@@ -49,7 +49,12 @@ func main() {
 				if !ok {
 					return
 				}
-				if event.Has(fsnotify.Write) && event.Name == "./excel.xlsx" {
+				if event.Name != "excel.xlsx" {
+					log.Printf("Ignoring file: [%v] %v", event.Op.String(), event.Name)
+					continue
+				}
+				log.Println("event:", event)
+				if event.Has(fsnotify.Create) {
 					fmt.Println("Modified file:", event.Name)
 					processExcelFile(event.Name, db)
 				}
