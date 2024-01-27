@@ -8,6 +8,7 @@ import (
 	"github.com/xuri/excelize/v2"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -39,7 +40,11 @@ func main() {
 	}
 	defer watcher.Close()
 
-	processExcelFile("./excel.xlsx", db)
+	var excelFile string
+	fmt.Print("Enter the name of the excel file: ")
+	fmt.Scanln(&excelFile)
+
+	processExcelFile(excelFile, db)
 
 	done := make(chan bool)
 	go func() {
@@ -49,7 +54,7 @@ func main() {
 				if !ok {
 					return
 				}
-				if event.Name != "excel.xlsx" {
+				if event.Name != excelFile {
 					log.Printf("Ignoring file: [%v] %v", event.Op.String(), event.Name)
 					continue
 				}
@@ -68,10 +73,15 @@ func main() {
 	}()
 
 	// read "excel.xlsx" from local directory
-	err = watcher.Add("./")
+	filePath, err := filepath.Abs(excelFile)
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = watcher.Add(filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Watching for changes in: ", filePath)
 	<-done
 }
 
