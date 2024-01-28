@@ -124,6 +124,13 @@ func processTable(f *excelize.File, table excelize.Table, db *sql.DB) {
 		columnDefinitions = append(columnDefinitions, fmt.Sprintf("`%s` %s", cell, dataType))
 	}
 
+	// Delete table if it already exists
+	dropTableSQL := fmt.Sprintf("DROP TABLE IF EXISTS `%s`;", table.Name)
+	_, err = db.Exec(dropTableSQL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	createTableSQL := fmt.Sprintf("CREATE TABLE IF NOT EXISTS `%s` (%s);", table.Name, strings.Join(columnDefinitions, ", "))
 	_, err = db.Exec(createTableSQL)
 	if err != nil {
