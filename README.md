@@ -20,7 +20,7 @@ The `database.go` tool is designed to automatically create tables and insert dat
 
 ### Prerequisites
 
-- Go version 1.16 or later.
+- Go version 1.21 or later.
 - The following Go packages are required:
   - `database/sql`
   - `github.com/fsnotify/fsnotify`
